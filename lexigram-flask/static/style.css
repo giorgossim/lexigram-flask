@@ -1,0 +1,50 @@
+body {
+    background-color: #111;
+    color: #fff;
+    font-family: sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    margin-top: 100px;
+}
+
+input[type="text"] {
+    font-size: 1.5rem;
+    padding: 10px;
+    width: 250px;
+    text-align: center;
+}
+
+button {
+    font-size: 1.5rem;
+    padding: 10px 20px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.word-display {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 50px;
+    min-height: 100vh;
+}
+
+.word {
+    background: #333;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 10px;
+    font-size: 2rem;
+    animation: float 5s infinite ease-in-out;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}

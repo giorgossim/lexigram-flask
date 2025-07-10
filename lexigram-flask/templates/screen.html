@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <title>Λέξεις</title>
+    <meta http-equiv="refresh" content="10"> <!-- Refresh κάθε 10 δευτερόλεπτα -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="word-display">
+        {% for word in words %}
+            <span class="word">{{ word }}</span>
+        {% endfor %}
+    </div>
+</body>
+</html>
