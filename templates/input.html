@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <title>Εισαγωγή Λέξης</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Γράψε μια λέξη</h1>
+        <form method="POST">
+            <input type="text" name="word" maxlength="10" placeholder="Μέχρι 10 χαρακτήρες" required>
+            <button type="submit">Αποστολή</button>
+        </form>
+    </div>
+</body>
+</html>
