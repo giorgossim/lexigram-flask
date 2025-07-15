@@ -81,16 +81,14 @@ def input_page():
 def screen():
     check_and_reset()
     words = load_words()
-    random.shuffle(words)
     return render_template('screen.html', words=words)
-
 
 @app.route('/api/words')
 def api_words():
     check_and_reset()
     words = load_words()
-    random.shuffle(words)
     return jsonify(words)
+
 
 if __name__ == "__main__":
   app.run(host="0.0.0.0", port=8080, debug=True)
