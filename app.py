@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template, redirect, url_for, jsonify
 import json
 import random
-from reset_utils import check_and_reset
+#from reset_utils import check_and_reset
 import os
 from datetime import datetime, timedelta
 
