@@ -1,97 +1,57 @@
-from flask import Flask, request, render_template, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, jsonify
 import json
-import random
-#from reset_utils import check_and_reset
 import os
-from datetime import datetime, timedelta
+import random
 
 app = Flask(__name__)
 
-WORDS_FILE = 'words.json'
-ARCHIVE_FOLDER = "archive"
-RESET_INTERVAL_HOURS = 24
-MAX_WORDS = 100
+WORDS_FILE = "words.json"
 
-# ------------ Λειτουργίες για διαχείριση λέξεων ------------
+# 1. Load words from file (or start empty)
+if os.path.exists(WORDS_FILE):
+    with open(WORDS_FILE, "r", encoding="utf-8") as f:
+        words = json.load(f)
+else:
+    words = []
 
-def load_words():
-    try:
-        with open(WORDS_FILE, 'r') as f:
-            return json.load(f)
-    except:
-        return []
-
-def save_words(words):
-    with open(WORDS_FILE, 'w') as f:
-        json.dump(words, f)
-
-# ------------ Λειτουργίες για reset & αρχειοθέτηση ------------
-
-def last_reset_time():
-    if os.path.exists("last_reset.txt"):
-        with open("last_reset.txt", "r") as f:
-            return datetime.fromisoformat(f.read().strip())
-    return datetime.now()
-
-def update_reset_time():
-    with open("last_reset.txt", "w") as f:
-        f.write(datetime.now().isoformat())
-
-def archive_words():
-    if not os.path.exists(ARCHIVE_FOLDER):
-        os.makedirs(ARCHIVE_FOLDER)
-    words = load_words()
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    with open(f"{ARCHIVE_FOLDER}/archive_{timestamp}.json", "w") as f:
-        json.dump(words, f)
-    save_words([])
-
-def check_and_reset():
-    reset_needed = False
-    if datetime.now() - last_reset_time() > timedelta(hours=RESET_INTERVAL_HOURS):
-        reset_needed = True
-    else:
-        words = load_words()
-        if len(words) >= MAX_WORDS:
-            reset_needed = True
-
-    if reset_needed:
-        archive_words()
-        update_reset_time()
-
-# ------------ Διαδρομές (routes) ------------
-
-@app.route('/')
+@app.route("/", methods=["GET", "POST"])
 def index():
-    return redirect(url_for('input_page'))
+    global words
+    if request.method == "POST":
+        new_word = request.form.get("word", "").strip()
+        if new_word:
+            words.append(new_word)
+            save_words()
+        return render_template("thankyou.html")  # We'll create this file
+    return render_template("input.html")
 
-@app.route('/input', methods=['GET', 'POST'])
-def input_page():
-    if request.method == 'POST':
-        word = request.form.get('word', '').strip()
-        if word and len(word) <= 10:
-            words = load_words()
-            words.append(word)
-            random.shuffle(words)
-            save_words(words)
-        return redirect(url_for('screen'))
-    return render_template('input.html')
+@app.route("/display")
+def display():
+    shuffled_words = words[:]
+    random.shuffle(shuffled_words)
+    return render_template("screen.html", words=shuffled_words)
 
-@app.route('/screen')
-def screen():
-    check_and_reset()
-    words = load_words()
-    return render_template('screen.html', words=words)
+@app.route("/reset")
+def reset():
+    key = request.args.get("key")
+    if key == "your_secret_key":  # CHANGE THIS to something private
+        global words
+        words = []
+        save_words()
+        return "Words reset."
+    return "Unauthorized.", 401
 
-@app.route('/api/words')
+@app.route("/api/words")
 def api_words():
-    check_and_reset()
-    words = load_words()
     return jsonify(words)
 
+def save_words():
+    with open(WORDS_FILE, "w", encoding="utf-8") as f:
+        json.dump(words, f, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":
-  app.run(host="0.0.0.0", port=8080, debug=True)
+    app.run(debug=True)
+
 
 
 
